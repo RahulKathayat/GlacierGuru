@@ -1,17 +1,20 @@
 import { View, Text ,Image, ScrollView, TouchableOpacity} from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Features from '../components/Features';
 import { dummyMessages } from '../constants';
 import Voice from '@react-native-voice/voice';
+import { apiCall } from '../api/openAI';
+import Tts from 'react-native-tts'; 
 
 export default function HomeScreen() {
-  const [result, setResult] = useState('');
-  const [messages,setMessages]= useState(dummyMessages);
+  let result='';
+  const [messages,setMessages]= useState([]);
   const [recording, setRecording] = useState(false);
   const [speaking, setSpeaking] = useState(false);
-
+  const ScrollViewRef=useRef();
+  const [loading, setLoading] = useState(false);
   const speechStartHandler = e => {
     console.log('speech start event');
   };
@@ -21,8 +24,9 @@ export default function HomeScreen() {
   };
   const speechResultsHandler = e => {
     console.log('speech event: ',e);
-    const text=e.value[0];
-    setResult(text);
+    result=e.value[0];
+    fetchResponse();
+    // setResult(text);
   };
   const speechErrorHandler = e=>{
     console.log('speech error: ',e);
@@ -30,6 +34,7 @@ export default function HomeScreen() {
 
   const startRecording = async () => {
     setRecording(true);
+    Tts.stop();
     try {
       await Voice.start('en-GB'); // en-US
 
@@ -42,15 +47,69 @@ export default function HomeScreen() {
     try {
       await Voice.stop();
       setRecording(false);
-      // fetchResponse();
+     
     } catch (error) {
       console.log('error', error);
     }
   };
+  
   const clear =()=>{
+    Tts.stop();
+    setSpeaking(false);
+    setLoading(false);
     setMessages([]);
   }
-  const stopSpeaking =()=>{
+
+  const fetchResponse = async ()=>{
+    if(result.trim().length>0){
+      setLoading(true);
+      let newMessages = [...messages];
+      newMessages.push({role: 'user', content: result.trim()});
+      setMessages([...newMessages]);
+
+      // scroll to the bottom of the view
+      updateScrollView();
+
+      // fetching response from chatGPT with our prompt and old messages
+      console.log('hey');
+      apiCall(result.trim(), newMessages).then(res=>{
+        console.log('got api data',res);
+        result='';
+        setLoading(false);
+        if(res.success){
+          setMessages([...res.data]);
+          updateScrollView();
+
+        //   // now play the response to user
+          startTextToSpeach(res.data[res.data.length-1]);
+          
+        }else{
+          Alert.alert('Error', res.msg);
+        }
+        
+      })
+    }
+  }
+
+  const updateScrollView = ()=>{
+    setTimeout(()=>{
+      ScrollViewRef?.current?.scrollToEnd({ animated: true });
+    },200)
+  }
+
+  const startTextToSpeach = message=>{
+    if(!message.content.includes('https')){
+      setSpeaking(true);
+      // playing response with the voice id and voice speed
+      Tts.speak(message.content, {
+        iosVoiceId: 'com.apple.ttsbundle.Samantha-compact',
+        rate: 0.5,
+      });
+    }
+  }
+  
+  const stopSpeaking = ()=>{
+    Tts.stop();
     setSpeaking(false);
   }
   useEffect(()=>{
@@ -59,12 +118,16 @@ export default function HomeScreen() {
     Voice.onSpeechResults = speechResultsHandler;
     Voice.onSpeechError = speechErrorHandler;
     
+    Tts.addEventListener('tts-start', (event) => console.log("start", event));
+    Tts.addEventListener('tts-progress', (event) => console.log("progress", event));
+    Tts.addEventListener('tts-finish', (event) => {console.log("finish", event); setSpeaking(false);});
+    Tts.addEventListener('tts-cancel', (event) => console.log("cancel", event));
+
     return ()=>{
       Voice.destroy().then(Voice.removeAllListeners);
     }
   },[])
 
-  // console.log('result:',result);
 
   return (
     <View className="flex-1 bg-white">
@@ -80,6 +143,7 @@ export default function HomeScreen() {
               </Text>
               <View style={{height:hp(60)}} className="bg-neutral-200 rounded-3xl p-4">
                 <ScrollView
+                ref={ScrollViewRef}
                   bounces={false}
                   className="space-y-4"
                   showsVerticalScrollIndicator={false}
@@ -146,18 +210,27 @@ export default function HomeScreen() {
         }
         <View className="flex justify-center items-center">
           {
-            recording?(
-              <TouchableOpacity onPress={stopRecording}>
-                <Image className="rounded-full mb-4" source={require('../../assets/images/voiceLoading.gif')} style={{height:hp(12), width:hp(12)}}></Image>
-              </TouchableOpacity>
-            )
-            :
+            loading?(
+              <Image 
+                source={require('../../assets/images/loading.gif')}
+                style={{width: hp(10), height: hp(10)}}
+              />
+            ):
             (
-              <TouchableOpacity onPress={startRecording}>
-                <Image className="rounded-full mb-4" source={require('../../assets/images/recordingIcon.png')} style={{height:hp(12), width:hp(12)}}></Image>
-              </TouchableOpacity>
+              recording?(
+                <TouchableOpacity onPress={stopRecording}>
+                  <Image className="rounded-full mb-4" source={require('../../assets/images/voiceLoading.gif')} style={{height:hp(12), width:hp(12)}}></Image>
+                </TouchableOpacity>
+              )
+              :
+              (
+                <TouchableOpacity onPress={startRecording}>
+                  <Image className="rounded-full mb-4" source={require('../../assets/images/recordingIcon.png')} style={{height:hp(12), width:hp(12)}}></Image>
+                </TouchableOpacity>
+              )
             )
           }
+          
           {
             messages.length>0 && (
               <TouchableOpacity 
