@@ -26,10 +26,10 @@ export const apiCall = async (prompt, messages)=>{
         isArt = isArt.trim();
         if(isArt.toLowerCase().includes('yes')){
             console.log('dalle api call');
-            return dalleApiCall(prompt, messages ||[])
+            return dalleApiCall(prompt, messages )
         }else{
             console.log('chatgpt api call')
-            return chatgptApiCall(prompt, messages||[]);
+            return chatgptApiCall(prompt, messages);
         }
 
     }catch(err){
