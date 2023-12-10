@@ -1,8 +1,8 @@
-import { apiKey } from "../constants";
+import Config from "react-native-config";
 import axios from 'axios';
 const client = axios.create({
     headers: {
-        "Authorization": "Bearer "+apiKey,
+        "Authorization": "Bearer "+Config.APIKEY,
         "Content-Type": "application/json"
     }
 })
