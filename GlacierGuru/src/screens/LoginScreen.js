@@ -1,16 +1,4 @@
-// import { View, Text ,Image , StatusBar} from 'react-native'
-// import React from 'react'
-
-// export default function LoginScreen() {
-//   return (
-//     <View className="bg-white h-full w-full">
-//         {/* <StatusBar style="light" /> */}
-//         <Image className="h-full w-full absolute" source={require('../../assets/images/background.png')} />
-//       <Text className="mt-10 ml-9">LoginScreen</Text>
-//     </View>
-//   )
-// }
-import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity,StatusBar } from 'react-native'
+import { View, Text, Image, TextInput, TouchableOpacity,StatusBar } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
@@ -53,7 +41,7 @@ export default function LoginScreen() {
             <View className="flex items-center mx-5 space-y-4">
                 <Animated.View 
                     entering={FadeInDown.duration(1000).springify()} 
-                    className="bg-black/5 p-5 rounded-2xl w-full">
+                    className="bg-black/5 p-2 rounded-2xl w-full ">
 
                     <TextInput
                         placeholder="Email"
@@ -62,7 +50,7 @@ export default function LoginScreen() {
                 </Animated.View>
                 <Animated.View 
                     entering={FadeInDown.delay(200).duration(1000).springify()} 
-                    className="bg-black/5 p-5 rounded-2xl w-full mb-3">
+                    className="bg-black/5 p-2 rounded-2xl w-full mb-3">
 
                     <TextInput
                         placeholder="Password"

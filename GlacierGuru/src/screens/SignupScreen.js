@@ -41,7 +41,7 @@ export default function SignupScreen() {
         <View className="flex items-center mx-5 space-y-4">
             <Animated.View 
                 entering={FadeInDown.duration(1000).springify()} 
-                className="bg-black/5 p-5 rounded-2xl w-full">
+                className="bg-black/5 p-2 rounded-2xl w-full">
                 <TextInput
                     placeholder="Username"
                     placeholderTextColor={'gray'}
@@ -49,7 +49,7 @@ export default function SignupScreen() {
             </Animated.View>
             <Animated.View 
                 entering={FadeInDown.delay(200).duration(1000).springify()} 
-                className="bg-black/5 p-5 rounded-2xl w-full">
+                className="bg-black/5 p-2 rounded-2xl w-full">
                 <TextInput
                     placeholder="Email"
                     placeholderTextColor={'gray'}
@@ -57,7 +57,7 @@ export default function SignupScreen() {
             </Animated.View>
             <Animated.View 
                 entering={FadeInDown.delay(400).duration(1000).springify()} 
-                className="bg-black/5 p-5 rounded-2xl w-full mb-3">
+                className="bg-black/5 p-2 rounded-2xl w-full mb-3">
                 <TextInput
                     placeholder="Password"
                     placeholderTextColor={'gray'}
