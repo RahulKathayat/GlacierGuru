@@ -11,6 +11,7 @@
     "dev": "npx react-native start android"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-native-voice/voice": "^3.2.4",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",

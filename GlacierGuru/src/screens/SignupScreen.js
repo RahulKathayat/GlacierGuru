@@ -1,11 +1,49 @@
-import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, Pressable,StatusBar } from 'react-native'
-import React from 'react'
+import { View, Text, Image, SafeAreaView, TextInput, TouchableOpacity, Pressable,StatusBar ,Alert,} from 'react-native'
+import React , {useState} from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
-
+import axios from "axios";
 
 export default function SignupScreen() {
+    const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
+    const [password, setPassword] = useState("");
+    const [image, setImage] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
+
+    const handleRegister = () => {
+        setLoading(true);
+        const user = {
+          name: name,
+          email: email,
+          password: password,
+          image: image,
+        };
+    
+        // send a POST  request to the backend API to register the user
+        axios.post('https://tsukimibackend.onrender.com/register', user)
+          .then((response) => {
+            console.log(response);
+            setLoading(false);
+            Alert.alert(
+              "Registration successful",
+              "You have been registered Successfully"
+            );
+            setName("");
+            setEmail("");
+            setPassword("");
+            setImage("");
+          })
+          .catch((error) => {
+            Alert.alert(
+              "Registration Error",
+              "An error occurred while registering"
+            );
+            console.log("registration failed", error);
+          });
+          setLoading(false);
+      };
   return (
     <View className="bg-white h-full w-full">
       {/* <StatusBar style="light" /> */}
@@ -43,6 +81,8 @@ export default function SignupScreen() {
                 entering={FadeInDown.duration(1000).springify()} 
                 className="bg-black/5 p-2 rounded-2xl w-full">
                 <TextInput
+                    value={name}
+                    onChangeText={(text) => setName(text)}
                     placeholder="Username"
                     placeholderTextColor={'gray'}
                 />
@@ -51,22 +91,36 @@ export default function SignupScreen() {
                 entering={FadeInDown.delay(200).duration(1000).springify()} 
                 className="bg-black/5 p-2 rounded-2xl w-full">
                 <TextInput
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
                     placeholder="Email"
                     placeholderTextColor={'gray'}
                 />
             </Animated.View>
             <Animated.View 
                 entering={FadeInDown.delay(400).duration(1000).springify()} 
-                className="bg-black/5 p-2 rounded-2xl w-full mb-3">
+                className="bg-black/5 p-2 rounded-2xl w-full">
                 <TextInput
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                    secureTextEntry={true}
                     placeholder="Password"
                     placeholderTextColor={'gray'}
-                    secureTextEntry
+                />
+            </Animated.View>
+            <Animated.View 
+                entering={FadeInDown.delay(600).duration(1000).springify()} 
+                className="bg-black/5 p-2 rounded-2xl w-full mb-3">
+                <TextInput
+                    value={image}
+                    onChangeText={(text) => setImage(text)}
+                    placeholderTextColor={'gray'}
+                    placeholder="enter profile picture URL ..."
                 />
             </Animated.View>
 
             <Animated.View className="w-full" entering={FadeInDown.delay(600).duration(1000).springify()}>
-                <TouchableOpacity className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
+                <TouchableOpacity onPress={handleRegister} className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
                     <Text className="text-xl font-bold text-white text-center">SignUp</Text>
                 </TouchableOpacity>
             </Animated.View>

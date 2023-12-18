@@ -1,11 +1,61 @@
-import { View, Text, Image, TextInput, TouchableOpacity,StatusBar } from 'react-native'
-import React from 'react'
+import { View, Text, Image, TextInput, TouchableOpacity,StatusBar,Alert } from 'react-native'
+import React,{useState,useEffect} from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Animated, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
-
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+          setLoading(true);
+          try {
+            const res=await axios.get("https://tsukimibackend.onrender.com");
+            console.log(res.data.message);
+            // const token = await AsyncStorage.getItem("authToken");
+            const token = await AsyncStorage.getItem("authToken");
+            if (token) {
+              navigation.replace("Home");
+            } else {
+              // token not found , show the login screen itself
+            }
+          } catch (error) {
+            console.log("error", error);
+          }
+          setLoading(false);
+        };
+    
+        checkLoginStatus();
+      }, []);
+
+      const handleLogin = () => {
+        setLoading(true);
+        const user = {
+          email: email,
+          password: password,
+        };
+    
+        axios
+          .post("https://tsukimibackend.onrender.com/login", user)
+          .then((response) => {
+            console.log(response);
+            const token = response.data.token;
+            AsyncStorage.setItem("authToken", token);
+            setLoading(false);
+            navigation.replace("Home");
+          })
+          .catch((error) => {
+            Alert.alert("Login Error", "Invalid email or password");
+            console.log("Login Error", error);
+          });
+          setLoading(false);
+      };
+
   return (
     <View className="bg-white h-full w-full">
         {/* <StatusBar style="light" /> */}
@@ -44,6 +94,8 @@ export default function LoginScreen() {
                     className="bg-black/5 p-2 rounded-2xl w-full ">
 
                     <TextInput
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
                         placeholder="Email"
                         placeholderTextColor={'gray'}
                     />
@@ -53,9 +105,11 @@ export default function LoginScreen() {
                     className="bg-black/5 p-2 rounded-2xl w-full mb-3">
 
                     <TextInput
+                        value={password}
+                        onChangeText={(text) => setPassword(text)}
+                        secureTextEntry={true}
                         placeholder="Password"
-                        placeholderTextColor={'gray'}
-                        secureTextEntry
+                        placeholderTextColor={'gray'}  
                     />
                 </Animated.View>
 
@@ -63,7 +117,7 @@ export default function LoginScreen() {
                     className="w-full" 
                     entering={FadeInDown.delay(400).duration(1000).springify()}>
 
-                    <TouchableOpacity className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
+                    <TouchableOpacity onPress={handleLogin} className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
                         <Text className="text-xl font-bold text-white text-center">Login</Text>
                     </TouchableOpacity>
                 </Animated.View>
