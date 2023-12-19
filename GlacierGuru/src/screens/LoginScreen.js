@@ -20,7 +20,7 @@ export default function LoginScreen() {
             // const token = await AsyncStorage.getItem("authToken");
             const token = await AsyncStorage.getItem("authToken");
             if (token) {
-              navigation.replace("Home");
+              navigation.replace("Welcome");
             } else {
               // token not found , show the login screen itself
             }
@@ -47,7 +47,7 @@ export default function LoginScreen() {
             const token = response.data.token;
             AsyncStorage.setItem("authToken", token);
             setLoading(false);
-            navigation.replace("Home");
+            navigation.replace("Welcome");
           })
           .catch((error) => {
             Alert.alert("Login Error", "Invalid email or password");

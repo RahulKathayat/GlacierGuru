@@ -1,13 +1,21 @@
 import { View, Text,SafeAreaView,Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React,{useEffect} from 'react'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
+import Geolocation from '@react-native-community/geolocation';
+
 export default function WelcomeScreen() {
     const navigation = useNavigation();
+    useEffect(()=>{
+        Geolocation.getCurrentPosition((info) => {
+            console.log("lat: ",info.coords.latitude , "lon: ",info.coords.longitude);
+        }  
+    );
+    },[]);
   return (
     <SafeAreaView className="flex-1 flex justify-around bg-white">
         <View className="space-y-2">
-            <Text style={{fontSize:wp(10)}} className="text-center font-bold text-gray-700">Jarvis</Text>
+            <Text style={{fontSize:wp(10)}} className="text-center font-bold text-gray-700">Glacier Guru</Text>
             <Text style={{fontSize:wp(4)}} className="text-center tracking-wider font-semi-bold text-gray-600">The future is here, powered by AI</Text>
         </View>
         <View className="flex-row justify-center">

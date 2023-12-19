@@ -18,7 +18,7 @@ export default function SignupScreen() {
           name: name,
           email: email,
           password: password,
-          image: image,
+          image: 'glacierguru',
         };
     
         // send a POST  request to the backend API to register the user
@@ -108,7 +108,7 @@ export default function SignupScreen() {
                     placeholderTextColor={'gray'}
                 />
             </Animated.View>
-            <Animated.View 
+            {/* <Animated.View 
                 entering={FadeInDown.delay(600).duration(1000).springify()} 
                 className="bg-black/5 p-2 rounded-2xl w-full mb-3">
                 <TextInput
@@ -117,7 +117,7 @@ export default function SignupScreen() {
                     placeholderTextColor={'gray'}
                     placeholder="enter profile picture URL ..."
                 />
-            </Animated.View>
+            </Animated.View> */}
 
             <Animated.View className="w-full" entering={FadeInDown.delay(600).duration(1000).springify()}>
                 <TouchableOpacity onPress={handleRegister} className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
