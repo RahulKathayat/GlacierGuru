@@ -7,6 +7,7 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import MapScreen from '../screens/MapScreen';
+import LatLongScreen from '../screens/LatLongScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ function AppNavigation() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Maps" component={MapScreen} />
+        <Stack.Screen name="LatLong" component={LatLongScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
