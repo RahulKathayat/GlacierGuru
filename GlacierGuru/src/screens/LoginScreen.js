@@ -21,6 +21,7 @@ export default function LoginScreen() {
             const token = await AsyncStorage.getItem("authToken");
             if (token) {
               navigation.replace("Welcome");
+              // navigation.clear();
             } else {
               // token not found , show the login screen itself
             }
