@@ -32,15 +32,15 @@ export default function LatLongScreen() {
       }, []);
 
   return (
-    <View>
-      <Text className="text-center py-12">Latitude and Longitude of Victims</Text>
+    <View className="bg-violet-500 w-full h-full">
+      <Text className="text-center py-12 text-lg font-bold ">Latitude and Longitude of Victims</Text>
       <View>
         {
             submissions.length !== 0 ?(
             submissions.map((submission) => {
                 return(
                     <View key={submission._id}>
-                        <Text className="text-center mb-3">• Co-Ordinates : {submission.coords} </Text>
+                        <Text className="text-center mb-3 text-lg font-semibold">• Co-Ordinates : {submission.coords} </Text>
                     </View>);
                 })
             ):(<Text>no data</Text>)
